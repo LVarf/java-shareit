@@ -1,9 +1,7 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.item.dto;
 
 import lombok.Data;
-import lombok.NonNull;
-import lombok.Value;
-import org.springframework.validation.annotation.Validated;
+import ru.practicum.shareit.item.model.Item;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -13,16 +11,22 @@ import javax.validation.constraints.NotNull;
  * // TODO .
  */
 @Data
-public class Item {
+public class ItemDTO {
     private long id;
     @NotBlank
-    @NotEmpty
     private String name;
     @NotBlank
-    @NotEmpty
     private String description;
     @NotNull
     private Boolean available;
     private long owner;
     private long request;
+
+    public ItemDTO(Item item) {
+        this.id = item.getId();
+        this.name = item.getName();
+        this.description = item.getDescription();
+        this.available = item.getAvailable();
+        this.owner = item.getOwner();
+    }
 }
