@@ -19,12 +19,14 @@ public class ItemServiceImpl implements ItemService{
     private final ItemRepository itemRepository;
     private final UserService userService;
 
+    //region postItem
     @Override
-    public ItemDTO postItem(Item item, long userId){
+    public ItemDTO postItem(ItemDTO item, long userId){
         userService.getUserById(userId);
         item.setOwner(userId);
-        return new ItemDTO(itemRepository.save(item));
+        return ItemMapper.mapperToItemDTO(itemRepository.save(ItemMapper.mapperToItem(item, userService)));
     }
+    //endregion
 
     //region updateItem
     @Override
@@ -32,10 +34,10 @@ public class ItemServiceImpl implements ItemService{
         userService.getUserById(userId);
         if(!itemRepository.getAllItems().containsKey(userId))
             throw new NotFoundObjectException("The user has no any items");
-        if(!itemRepository.getAllItems()
+        if(itemRepository.getAllItems()
                 .get(userId)
                 .stream()
-                .anyMatch(i -> i.getId() == itemId))
+                .noneMatch(i -> i.getId() == itemId))
             throw new NotFoundObjectException("The user has no the item");
 
 
@@ -55,7 +57,7 @@ public class ItemServiceImpl implements ItemService{
         if(jsonNode.has("available"))
             item.setAvailable(jsonNode.get("available").asBoolean());
 
-        return new ItemDTO(item);
+        return ItemMapper.mapperToItemDTO(item);
     }
     //endregion
 
@@ -69,7 +71,7 @@ public class ItemServiceImpl implements ItemService{
                 .anyMatch(item -> item.getId() == itemId))
             throw new NotFoundObjectException("Has no item");
 
-        return new ItemDTO(itemRepository.getAllItems()
+        return ItemMapper.mapperToItemDTO(itemRepository.getAllItems()
                 .values().stream()
                 .flatMap(List::stream)
                 .filter(item -> item.getId() == itemId)
@@ -86,11 +88,12 @@ public class ItemServiceImpl implements ItemService{
 
         return itemRepository.getAllItems().get(userId)
                 .stream()
-                .map(ItemDTO::new)
+                .map(ItemMapper::mapperToItemDTO)
                 .collect(Collectors.toList());
     }
     //endregion
 
+    //region search items by text
     @Override
     public List<ItemDTO> searchItems(String text) {
         if(text.isEmpty())
@@ -101,7 +104,8 @@ public class ItemServiceImpl implements ItemService{
                 .filter(Item::getAvailable)
                 .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
                         || item.getDescription().toLowerCase().contains(text.toLowerCase()))
-                .map(ItemDTO::new)
+                .map(ItemMapper::mapperToItemDTO)
                 .collect(Collectors.toList());
     }
+    //endregion
 }

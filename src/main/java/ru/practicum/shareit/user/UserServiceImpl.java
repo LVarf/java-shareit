@@ -19,17 +19,19 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private long newUserId = 1;
 
+    //region getAllUsers
     @Override
     public List<UserDTO> getAllUsers() {
         return userRepository.getAllUsers()
                 .stream()
-                .map(UserDTO::new)
+                .map(UserMapper::mapperToUserDTO)
                 .collect(Collectors.toList());
     }
+    //endregion
 
     //region SaveUser
     @Override
-    public User saveUser(User user) {
+    public UserDTO saveUser(UserDTO user) {
         boolean containEmail = userRepository.getAllUsers()
                 .stream()
                 .map(User::getEmail)
@@ -37,23 +39,26 @@ public class UserServiceImpl implements UserService{
         if(containEmail)
             throw new IllegalArgumentException("There is a user with such an email");
         user.setId(getNewUserId());
-        return userRepository.saveUser(user);
+        return UserMapper.mapperToUserDTO(userRepository.saveUser(UserMapper.mapperToUser(user)));
     }
     //endregion
 
+    //region getUserById
     @Override
     public UserDTO getUserById(long userId) {
         if (userRepository.getAllUsers()
                 .stream()
                 .map(User::getId)
                 .anyMatch(id -> id == userId))
-            return new UserDTO(userRepository.getAllUsers()
+            return UserMapper.mapperToUserDTO(userRepository.getAllUsers()
                     .stream()
                     .filter(user -> user.getId() == userId)
                     .collect(Collectors.toList()).get(0));
         throw new NotFoundObjectException("The user is not found");
     }
+    //endregion
 
+    //region deleteUser
     @Override
     public boolean deleteUser(long userId) {
         if (userRepository.getAllUsers()
@@ -68,13 +73,15 @@ public class UserServiceImpl implements UserService{
                                     .collect(Collectors.toList()).get(0));
         return false;
     }
+    //endregion
 
+    //region updateUser
     @Override
     public UserDTO updateUser(long userId, String params) throws JsonProcessingException{
-        if (!userRepository.getAllUsers()
+        if (userRepository.getAllUsers()
                 .stream()
                 .map(User::getId)
-                .anyMatch(id -> id == userId))
+                .noneMatch(id -> id == userId))
             throw new IllegalArgumentException("There is no the user");
 
         User user = userRepository.getAllUsers()
@@ -98,10 +105,11 @@ public class UserServiceImpl implements UserService{
             user.setEmail(jsonNode.get("email").asText());
         }
 
-        return new UserDTO(user);
+        return UserMapper.mapperToUserDTO(user);
     }
+    //endregion
 
-    private final long getNewUserId(){
+    private long getNewUserId(){
         return newUserId++;
     }
 

@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDTO;
-import ru.practicum.shareit.user.model.User;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -21,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public User saveNewUser(@RequestBody @Valid User user) {
+    public UserDTO saveNewUser(@RequestBody @Valid UserDTO user) {
         return userService.saveUser(user);
     }
 

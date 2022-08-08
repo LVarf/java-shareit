@@ -2,14 +2,12 @@ package ru.practicum.shareit.item;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import ru.practicum.shareit.item.dto.ItemDTO;
-import ru.practicum.shareit.item.model.Item;
 
-import javax.management.BadAttributeValueExpException;
 import java.util.List;
 
 public interface ItemService {
 
-    ItemDTO postItem(Item item, long userId) throws Exception;
+    ItemDTO postItem(ItemDTO item, long userId) throws Exception;
 
     ItemDTO updateItem(long itemId, long userId, String param) throws JsonProcessingException;
 

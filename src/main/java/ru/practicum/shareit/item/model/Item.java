@@ -1,9 +1,9 @@
 package ru.practicum.shareit.item.model;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
-import lombok.Value;
-import org.springframework.validation.annotation.Validated;
+import ru.practicum.shareit.requests.ItemRequest;
+import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
  * // TODO .
  */
 @Data
+@Builder(toBuilder = true)
 public class Item {
     private long id;
     @NotBlank
@@ -23,6 +24,6 @@ public class Item {
     private String description;
     @NotNull
     private Boolean available;
-    private long owner;
-    private long request;
+    private User owner;
+    private ItemRequest request;
 }

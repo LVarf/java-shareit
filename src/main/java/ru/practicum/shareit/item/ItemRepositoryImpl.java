@@ -23,7 +23,7 @@ public class ItemRepositoryImpl implements ItemRepository{
     @Override
     public Item save(Item item) {
         item.setId(getId());
-        items.compute(item.getOwner(), (owner, userItems) -> {
+        items.compute(item.getOwner().getId(), (owner, userItems) -> {
                     if (userItems == null)
                         userItems = new ArrayList<>();
                     userItems.add(item);
