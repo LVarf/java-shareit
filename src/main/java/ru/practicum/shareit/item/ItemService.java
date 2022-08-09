@@ -9,7 +9,7 @@ public interface ItemService {
 
     ItemDTO postItem(ItemDTO item, long userId) throws Exception;
 
-    ItemDTO updateItem(long itemId, long userId, String param) throws JsonProcessingException;
+    ItemDTO updateItem(long itemId, long userId, ItemDTO itemDTO);
 
     ItemDTO getItemByItemId(long itemId);
 

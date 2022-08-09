@@ -1,9 +1,5 @@
 package ru.practicum.shareit.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-//import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundObjectException;
@@ -77,7 +73,7 @@ public class UserServiceImpl implements UserService{
 
     //region updateUser
     @Override
-    public UserDTO updateUser(long userId, String params) throws JsonProcessingException{
+    public UserDTO updateUser(long userId, UserDTO userDTO) {
         if (userRepository.getAllUsers()
                 .stream()
                 .map(User::getId)
@@ -89,20 +85,17 @@ public class UserServiceImpl implements UserService{
                 .filter(u -> u.getId() == userId)
                 .collect(Collectors.toList()).get(0);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        //objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false);
+        if (userDTO.getName() != null)
+            user.setName(userDTO.getName());
 
-        JsonNode jsonNode = objectMapper.readTree(params);
-        if (jsonNode.has("name"))
-            user.setName(jsonNode.get("name").asText());
-        if (jsonNode.has("email")) {
+        if (userDTO.getEmail() != null) {
             boolean containEmail = userRepository.getAllUsers()
                     .stream()
                     .map(User::getEmail)
-                    .anyMatch(email -> email.equals(jsonNode.get("email").asText()));
+                    .anyMatch(email -> email.equals(userDTO.getEmail()));
             if (containEmail)
                 throw new IllegalArgumentException("There is a user with such an email");
-            user.setEmail(jsonNode.get("email").asText());
+            user.setEmail(userDTO.getEmail());
         }
 
         return UserMapper.mapperToUserDTO(user);

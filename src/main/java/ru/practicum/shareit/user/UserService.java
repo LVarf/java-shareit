@@ -14,5 +14,5 @@ public interface UserService {
 
     boolean deleteUser(long userId);
 
-    UserDTO updateUser(long userId, String params) throws JsonProcessingException;
+    UserDTO updateUser(long userId, UserDTO userDTO);
 }

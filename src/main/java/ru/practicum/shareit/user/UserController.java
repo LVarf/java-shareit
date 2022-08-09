@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +24,9 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public UserDTO updateUser(@PathVariable long userId, @RequestBody String params) throws JsonProcessingException {
-           return userService.updateUser(userId, params);
+    public UserDTO updateUser(@PathVariable long userId,
+                              @RequestBody UserDTO userDTO){
+           return userService.updateUser(userId, userDTO);
     }
 
     @GetMapping("/{userId}")

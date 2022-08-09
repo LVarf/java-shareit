@@ -19,16 +19,15 @@ public class ItemController {
 
     @PostMapping
     public ItemDTO postItem(@RequestBody @Valid ItemDTO item,
-                            @RequestHeader(/*value = */"X-Sharer-User-Id") long userId) throws Exception {
+                            @RequestHeader("X-Sharer-User-Id") long userId) throws Exception {
         return itemService.postItem(item, userId);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDTO updateItem(@PathVariable long itemId,
                               @RequestHeader("X-Sharer-User-Id") long userId,
-                              @RequestBody String params)
-            throws JsonProcessingException {
-        return itemService.updateItem(itemId, userId, params);
+                              @RequestBody ItemDTO itemDTO) {
+        return itemService.updateItem(itemId, userId, itemDTO);
     }
 
     @GetMapping("/{itemId}")

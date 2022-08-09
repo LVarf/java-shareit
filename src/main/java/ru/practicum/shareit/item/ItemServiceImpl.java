@@ -1,8 +1,5 @@
 package ru.practicum.shareit.item;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundObjectException;
@@ -30,7 +27,7 @@ public class ItemServiceImpl implements ItemService{
 
     //region updateItem
     @Override
-    public ItemDTO updateItem(long itemId, long userId, String params) throws JsonProcessingException {
+    public ItemDTO updateItem(long itemId, long userId, ItemDTO itemDTO){
         userService.getUserById(userId);
         if(!itemRepository.getAllItems().containsKey(userId))
             throw new NotFoundObjectException("The user has no any items");
@@ -40,22 +37,18 @@ public class ItemServiceImpl implements ItemService{
                 .noneMatch(i -> i.getId() == itemId))
             throw new NotFoundObjectException("The user has no the item");
 
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(params);
-
         Item item = itemRepository.findByUserId(userId)
                 .stream()
                 .filter(s -> s.getId() == itemId)
                 .collect(Collectors.toList())
                 .get(0);
 
-        if(jsonNode.has("name"))
-            item.setName(jsonNode.get("name").asText());
-        if(jsonNode.has("description"))
-            item.setDescription(jsonNode.get("description").asText());
-        if(jsonNode.has("available"))
-            item.setAvailable(jsonNode.get("available").asBoolean());
+        if(itemDTO.getName() != null)
+            item.setName(itemDTO.getName());
+        if(itemDTO.getDescription() != null)
+            item.setDescription(itemDTO.getDescription());
+        if(itemDTO.getAvailable() != null)
+            item.setAvailable(itemDTO.getAvailable());
 
         return ItemMapper.mapperToItemDTO(item);
     }

@@ -5,6 +5,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserService;
 
+import javax.validation.constraints.NotNull;
+
 public class ItemMapper {
 
     public static ItemDTO mapperToItemDTO (Item item) {
@@ -20,7 +22,7 @@ public class ItemMapper {
     public static Item mapperToItem (ItemDTO itemDTO, UserService userService) {
         return Item.builder()
                 .available(itemDTO.getAvailable())
-                .owner(UserMapper.mapperToUser(userService.getUserById(itemDTO.getOwner())))//дописать вызов объекта через маппер
+                .owner(UserMapper.mapperToUser(userService.getUserById(itemDTO.getOwner())))
                 .id(itemDTO.getId())
                 .description(itemDTO.getDescription())
                 .name(itemDTO.getName())
