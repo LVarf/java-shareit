@@ -5,7 +5,7 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
 
-@Repository
+/*
 public class ItemRepositoryImpl implements ItemRepository{
     private final Map<Long, List<Item>> items = new HashMap<>();
     private long newItemId = 1;
@@ -42,13 +42,6 @@ public class ItemRepositoryImpl implements ItemRepository{
     }
 
     private long getId() {
-        /*long lastId = items.values()
-                .stream()
-                .flatMap(Collection::stream)
-                .mapToLong(Item::getId)
-                .max()
-                .orElse(0);
-        return lastId + 1;*/
         return newItemId++;
     }
-}
+}*/

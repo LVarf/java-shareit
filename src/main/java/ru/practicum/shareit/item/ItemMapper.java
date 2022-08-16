@@ -12,17 +12,17 @@ public class ItemMapper {
     public static ItemDTO mapperToItemDTO (Item item) {
         return ItemDTO.builder()
                 .available(item.getAvailable())
-                .owner(item.getOwner().getId())
+                .owner(item.getOwner()/*.getId()*/)
                 .id(item.getId())
                 .description(item.getDescription())
                 .name(item.getName())
                 .build();
     }
 
-    public static Item mapperToItem (ItemDTO itemDTO, UserService userService) {
+    public static Item mapperToItem (ItemDTO itemDTO) {
         return Item.builder()
                 .available(itemDTO.getAvailable())
-                .owner(UserMapper.mapperToUser(userService.getUserById(itemDTO.getOwner())))
+                .owner(itemDTO.getOwner())
                 .id(itemDTO.getId())
                 .description(itemDTO.getDescription())
                 .name(itemDTO.getName())

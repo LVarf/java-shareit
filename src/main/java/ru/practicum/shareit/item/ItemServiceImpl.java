@@ -21,27 +21,20 @@ public class ItemServiceImpl implements ItemService{
     public ItemDTO postItem(ItemDTO item, long userId){
         userService.getUserById(userId);
         item.setOwner(userId);
-        return ItemMapper.mapperToItemDTO(itemRepository.save(ItemMapper.mapperToItem(item, userService)));
+        itemRepository.save(ItemMapper.mapperToItem(item));
+        return ItemMapper.mapperToItemDTO(itemRepository.save(ItemMapper.mapperToItem(item)));
     }
     //endregion
 
     //region updateItem
     @Override
     public ItemDTO updateItem(long itemId, long userId, ItemDTO itemDTO){
-        userService.getUserById(userId);
-        if(!itemRepository.getAllItems().containsKey(userId))
-            throw new NotFoundObjectException("The user has no any items");
-        if(itemRepository.getAllItems()
-                .get(userId)
-                .stream()
-                .noneMatch(i -> i.getId() == itemId))
-            throw new NotFoundObjectException("The user has no the item");
+       if(itemRepository.findById(itemId).isPresent()) {
+           if(itemRepository.findById(itemId).get().getOwner() != userId)
+               throw new NotFoundObjectException("The user has no this item");
+       } else throw new NotFoundObjectException("There is no items");
 
-        Item item = itemRepository.findByUserId(userId)
-                .stream()
-                .filter(s -> s.getId() == itemId)
-                .collect(Collectors.toList())
-                .get(0);
+        Item item = itemRepository.findById(itemId).get();
 
         if(itemDTO.getName() != null)
             item.setName(itemDTO.getName());
@@ -49,6 +42,8 @@ public class ItemServiceImpl implements ItemService{
             item.setDescription(itemDTO.getDescription());
         if(itemDTO.getAvailable() != null)
             item.setAvailable(itemDTO.getAvailable());
+
+        itemRepository.save(item);
 
         return ItemMapper.mapperToItemDTO(item);
     }
@@ -58,17 +53,10 @@ public class ItemServiceImpl implements ItemService{
     @Override
     public ItemDTO getItemByItemId(long itemId) {
 
-        if(!itemRepository.getAllItems()
-                .values().stream()
-                .flatMap(List::stream)
-                .anyMatch(item -> item.getId() == itemId))
+        if(itemRepository.findById(itemId).isEmpty())
             throw new NotFoundObjectException("Has no item");
 
-        return ItemMapper.mapperToItemDTO(itemRepository.getAllItems()
-                .values().stream()
-                .flatMap(List::stream)
-                .filter(item -> item.getId() == itemId)
-                .collect(Collectors.toList()).get(0));
+        return ItemMapper.mapperToItemDTO(itemRepository.findById(itemId).get());
     }
     //endregion
 
@@ -76,11 +64,12 @@ public class ItemServiceImpl implements ItemService{
     @Override
     public List<ItemDTO> getItemsByUserId(long userId) {
         userService.getUserById(userId);
-        if(!itemRepository.getAllItems().containsKey(userId))
+        if(itemRepository.findByOwner(userId).isEmpty())
             throw new NotFoundObjectException("The user has no items");
 
-        return itemRepository.getAllItems().get(userId)
+        return itemRepository.findByOwner(userId)
                 .stream()
+                .flatMap(List::stream)
                 .map(ItemMapper::mapperToItemDTO)
                 .collect(Collectors.toList());
     }
@@ -91,9 +80,9 @@ public class ItemServiceImpl implements ItemService{
     public List<ItemDTO> searchItems(String text) {
         if(text.isEmpty())
             return List.of();
-        return itemRepository.getAllItems().values()
+        //return itemRepository.getAllItems().values()
+        return itemRepository.findAll()
                 .stream()
-                .flatMap(List::stream)
                 .filter(Item::getAvailable)
                 .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
                         || item.getDescription().toLowerCase().contains(text.toLowerCase()))
