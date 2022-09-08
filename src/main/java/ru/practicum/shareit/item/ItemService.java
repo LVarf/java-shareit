@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface ItemService {
 
-    ItemDTO postItem(ItemDTO item, long userId) throws Exception;
+    ItemDTO postItem(ItemDTO item, Long userId);
 
-    ItemDTO updateItem(long itemId, long userId, ItemDTO itemDTO);
+    ItemDTO updateItem(Long itemId, Long userId, ItemDTO itemDTO);
 
-    ItemDTO getItemByItemId(long itemId);
+    ItemDTO getItemByItemId(Long itemId);
 
-    List<ItemDTO> getItemsByUserId(long userId);
+    List<ItemDTO> getItemsByUserId(Long userId);
 
     List<ItemDTO> searchItems(String text);
 }

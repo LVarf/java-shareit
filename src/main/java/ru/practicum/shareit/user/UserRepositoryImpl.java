@@ -1,3 +1,4 @@
+/*
 package ru.practicum.shareit.user;
 
 import org.springframework.stereotype.Repository;
@@ -21,3 +22,4 @@ public class UserRepositoryImpl implements UserRepository{
         return user;
     }
 }
+*/

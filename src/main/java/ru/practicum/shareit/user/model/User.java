@@ -13,18 +13,15 @@ import javax.validation.constraints.NotEmpty;
  */
 @Entity
 @Data
-@Builder(toBuilder = true)
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
-    @NotBlank
-    @Column
+    @Column(name = "name", nullable = false)
     private String name;
     @Email
-    @NotEmpty
-    @Column
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 }
 

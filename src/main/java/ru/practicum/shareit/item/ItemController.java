@@ -18,7 +18,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDTO postItem(@RequestBody @Valid ItemDTO item,
-                            @RequestHeader("X-Sharer-User-Id") long userId) throws Exception {
+                            @RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.postItem(item, userId);
     }
 
