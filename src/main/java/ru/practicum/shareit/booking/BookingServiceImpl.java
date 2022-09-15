@@ -6,11 +6,12 @@ import ru.practicum.shareit.booking.dto.BookingDTO;
 import ru.practicum.shareit.booking.dto.BookingStatusDTO;
 import ru.practicum.shareit.booking.mapping.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.exceptions.BadRequestException;
+import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.exceptions.NotFoundRequestException;
 import ru.practicum.shareit.exceptions.NotFoundObjectException;
-import ru.practicum.shareit.exceptions.UnsupportedStatusException;
+import ru.practicum.shareit.exceptions.BadRequestException;
 import ru.practicum.shareit.exceptions.ValidationException;
-import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.mapping.ItemMapper;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.model.Item;
@@ -37,7 +38,7 @@ public class BookingServiceImpl implements BookingService {
         Item item = itemRepository.findById(bookingDTO.getItemId())
                 .orElseThrow(() -> new NotFoundObjectException("Has no item"));
         if (item.getOwner().getId() == userId)
-            throw new BadRequestException("An user cannot booking an own item");
+            throw new NotFoundRequestException("An user cannot booking an own item");
         if (!item.getAvailable())
             throw new ValidationException("Response error: an item is not available");
         else bookingDTO.setItem(ItemMapper.mapperToItemDTO(item));
@@ -96,7 +97,7 @@ public class BookingServiceImpl implements BookingService {
             case "REJECTED" -> bookingRepository.findByBookerIdAndStatus(userId,
                             BookingStatusDTO.REJECTED.getName())
                     .orElseThrow(NullPointerException::new);
-            default -> throw new UnsupportedStatusException("UNSUPPORTED_STATUS");
+            default -> throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
         };
         return list.stream()
                 .map(BookingMapper::mapperToBookingDTO)
@@ -110,7 +111,8 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> list = switch (state) {
             case "ALL" -> bookingRepository.findAllBookingsByOwnerItemAllState(userId)
                     .orElseThrow(NullPointerException::new);
-            case "CURRENT" -> bookingRepository.findAllBookingsByOwnerItemCurrentState(userId, LocalDateTime.now())
+            case "CURRENT" -> bookingRepository
+                    .findAllBookingsByOwnerItemCurrentState(userId, LocalDateTime.now())
                     .orElseThrow(NullPointerException::new);
             case "PAST" -> bookingRepository.findAllBookingsByOwnerItemPastState(userId, LocalDateTime.now())
                     .orElseThrow(NullPointerException::new);
@@ -122,7 +124,7 @@ public class BookingServiceImpl implements BookingService {
             case "REJECTED" -> bookingRepository.findAllBookingsByOwnerItemAndStatus(userId,
                             BookingStatusDTO.REJECTED.getName())
                     .orElseThrow(NullPointerException::new);
-            default -> throw new UnsupportedStatusException("UNSUPPORTED_STATUS");
+            default -> throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
         };
         return list.stream()
                 .map(BookingMapper::mapperToBookingDTO)

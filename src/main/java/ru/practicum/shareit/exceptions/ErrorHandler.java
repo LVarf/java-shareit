@@ -20,19 +20,19 @@ public class ErrorHandler {
                 "Error message", e.getMessage()
         );
     }
-    @ExceptionHandler(UnsupportedStatusException.class)
+    @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)//400
-    public Map<String, String> handleUnsupportedStatusException(UnsupportedStatusException e) {
+    public Map<String, String> handleUnsupportedStatusException(BadRequestException e) {
         Map<String, String> map = new HashMap<>();
-        map.put("error", "Unknown state: " + e.getMessage());
+        map.put("error", e.getMessage());
         return map;
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)//404
-    public Map<String, String> handleBadRequestException(BadRequestException e) {
+    public Map<String, String> handleBadRequestException(NotFoundRequestException e) {
         Map<String, String> map = new HashMap<>();
-        map.put("error", "Bad request : " + e.getMessage());
+        map.put("error", "Not found : " + e.getMessage());
         return map;
     }
 

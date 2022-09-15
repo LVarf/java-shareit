@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.dto.BookingStatusDTO;
 import ru.practicum.shareit.booking.model.Booking;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "from bookings b " +
             "where b.booker_id = ?1 " +
             "and b.end_date > ?2 " +
-            "and b.start_date < ?2" +
+            "and b.start_date < ?2 " +
             "ORDER BY b.start_date DESC", nativeQuery = true)
     Optional<List<Booking>> findAllBookingsByBookerStateCurrent(Long userId, LocalDateTime now);
 
@@ -65,7 +66,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "on b.item_id = i.id " +
             "where i.owner_id = ?1 " +
             "and b.end_date > ?2 " +
-            "and b.start_date < ?2" +
+            "and b.start_date < ?2 " +
             "ORDER BY start_date desc;", nativeQuery = true)
     Optional<List<Booking>> findAllBookingsByOwnerItemCurrentState(Long userId, LocalDateTime now);
 
@@ -111,6 +112,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "ORDER BY b.start_date desc " +
             "limit 1;", nativeQuery = true)
     Optional<List<Booking>> findNextBooking(Long userId, LocalDateTime now);
+
+    @Query(value = "select * " +
+            "from bookings b " +
+            "where b.item_id = ?1 " +
+            "and b.booker_id = ?2 " +
+            "and b.end_date < ?3", nativeQuery = true)
+    Optional<List<Booking>> findBookingForCreateComment(Long itemId, Long userId, LocalDateTime now);
 
 
 }

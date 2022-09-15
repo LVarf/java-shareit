@@ -1,10 +1,10 @@
-package ru.practicum.shareit.comment.model;
+package ru.practicum.shareit.item.model;
 
 import lombok.Data;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -16,7 +16,9 @@ public class Comment {
     @Column(name = "text", nullable = false)
     private String text;
     @ManyToOne(fetch = FetchType.LAZY)
-    private Item itemId;
+    private Item item;
     @ManyToOne(fetch = FetchType.LAZY)
     private User author;
+    @Column(name = "created", nullable = false)
+    private LocalDateTime created;
 }
