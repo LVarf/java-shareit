@@ -1,10 +1,13 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.utility.dispatcher.JavaDispatcher;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDTO;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 /**
@@ -24,23 +27,30 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingDTO updateStatus(Long itemOwner, @PathVariable Long bookingId) {
-        return null;
+    public BookingDTO updateStatus(@RequestHeader("X-Sharer-User-Id") Long itemOwner,
+                                   @PathVariable Long bookingId,
+                                   @RequestParam(value = "approved") boolean approved) {
+        return bookingService.patchApproved(itemOwner, bookingId, approved);
     }
 
-    @GetMapping("bookingId")
-    public BookingDTO getBooking(Long requesterId, @PathVariable Long bookingId) {
-        return null;
+    @GetMapping("/{bookingId}")
+    public BookingDTO getBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                 @PathVariable("bookingId") Long bookingId) {
+        return bookingService.getBooking(userId, bookingId);
     }
 
     @GetMapping
-    public List<BookingDTO> getBookingByUserId(@RequestParam("status") BookingStatus status, Long userId) {
-        return null;
+    public List<BookingDTO> getBookingByUserId(
+            @RequestParam(value = "state", required = false, defaultValue = "ALL") String state,
+            @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return bookingService.getBookingByUserId(state, userId);
     }
 
     @GetMapping("/owner")
-    public List<BookingDTO> getBookingItemsByOwnerId(@RequestParam("status") BookingStatus status, Long ownerId) {
-        return null;
+    public List<BookingDTO> getBookingItemsByOwnerId(
+            @RequestParam(value = "state", required = false, defaultValue = "ALL") String state,
+            @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return bookingService.getBookingByOwnerId(state, userId);
     }
 
 }

@@ -10,13 +10,13 @@ import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserService;
 
 public class BookingMapper {
-    public static Booking mapperToBooking(BookingDTO bookingDTO, UserService userService, ItemService itemService) {
+    public static Booking mapperToBooking(BookingDTO bookingDTO, UserService userService) {
         Booking booking = new Booking();
-        booking.setEndBooking(bookingDTO.getEndBooking());
-        booking.setStartBooking(bookingDTO.getStartBooking());
-        booking.setItem(ItemMapper.mapperToItem(itemService.getItemByItemId(bookingDTO.getItemId()), userService));
+        booking.setEnd(bookingDTO.getEnd());
+        booking.setStart(bookingDTO.getStart());
+        booking.setItem(ItemMapper.mapperToItem(bookingDTO.getItem(), userService));
         booking.setBooker(
-                UserMapper.mapperToUser(userService.getUserById(bookingDTO.getBookerId()))
+                UserMapper.mapperToUser(bookingDTO.getBooker())
         );
         booking.setStatus(statusToBooking(bookingDTO.getStatus()));
         return booking;
@@ -24,11 +24,13 @@ public class BookingMapper {
 
     public static BookingDTO mapperToBookingDTO(Booking booking) {
         BookingDTO bookingDTO = new BookingDTO();
-        bookingDTO.setEndBooking(booking.getEndBooking());
-        bookingDTO.setStartBooking(booking.getStartBooking());
-        bookingDTO.setItemId(booking.getItem().getId());
-        bookingDTO.setBookerId(booking.getBooker().getId());
+        bookingDTO.setId(booking.getId());
+        bookingDTO.setEnd(booking.getEnd());
+        bookingDTO.setStart(booking.getStart());
+        bookingDTO.setItem(ItemMapper.mapperToItemDTO(booking.getItem()));
+        bookingDTO.setBooker(UserMapper.mapperToUserDTO(booking.getBooker()));
         bookingDTO.setStatus(statusToBookingDTO(booking.getStatus()));
+        bookingDTO.setBookerId(booking.getBooker().getId());
         return bookingDTO;
     }
 

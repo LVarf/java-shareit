@@ -6,6 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 /**
@@ -18,10 +19,10 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name = "start_booking", nullable = false)
-    private LocalDateTime startBooking;
-    @Column(name = "end_booking", nullable = false)
-    private LocalDateTime endBooking;
+    @Column(name = "start_date", nullable = false)
+    private LocalDateTime start;
+    @Column(name = "end_date", nullable = false)
+    private LocalDateTime end;
     @ManyToOne(fetch = FetchType.LAZY)
     private Item item;
     @ManyToOne(fetch = FetchType.LAZY)

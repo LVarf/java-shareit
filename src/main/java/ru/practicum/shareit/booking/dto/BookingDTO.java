@@ -1,8 +1,10 @@
 package ru.practicum.shareit.booking.dto;
 
 import lombok.Data;
+import ru.practicum.shareit.item.dto.ItemDTO;
+import ru.practicum.shareit.user.dto.UserDTO;
+import ru.practicum.shareit.user.model.User;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
@@ -11,18 +13,15 @@ import java.time.LocalDateTime;
  */
 @Data
 public class BookingDTO {
-    /*@NotNull
-    @NotBlank*/
+    private long id;
+    @NotNull
+    private LocalDateTime start;
+    @NotNull
+    private LocalDateTime end;
+    @NotNull
     private Long itemId;
-    /*@NotNull
-    @NotBlank*/
-    private LocalDateTime startBooking;
-    /*@NotNull
-    @NotBlank*/
-    private LocalDateTime endBooking;
-
-   /* @NotNull
-    @NotBlank*/
     private Long bookerId;
+    private ItemDTO item;
+    private UserDTO booker;
     private BookingStatusDTO status = BookingStatusDTO.WAITING;
 }

@@ -4,13 +4,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.dto.BookingDTO;
+import ru.practicum.shareit.booking.mapping.BookingMapper;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exceptions.NotFoundObjectException;
 import ru.practicum.shareit.item.dto.ItemDTO;
+import ru.practicum.shareit.item.dto.ItemDTOForGetByItemId;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserService;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,13 +26,14 @@ public class ItemServiceImpl implements ItemService{
     private final ItemRepository itemRepository;
     private final UserService userService;
 
+    private final BookingRepository bookingRepository;
+
 
     //region postItem
     @Transactional
     @Override
     public ItemDTO postItem(ItemDTO itemDTO, Long userId){
-        userService.getUserById(userId);
-        itemDTO.setOwner(userId);
+        itemDTO.setOwner(userService.getUserById(userId));
         itemDTO = ItemMapper.mapperToItemDTO(itemRepository.save(ItemMapper.mapperToItem(itemDTO, userService)));
         return itemDTO;
     }
@@ -41,7 +48,7 @@ public class ItemServiceImpl implements ItemService{
                throw new NotFoundObjectException("The user has no this item");
        } else throw new NotFoundObjectException("There is no items");
 
-        Item item = itemRepository.findById(itemId).get();
+       Item item = itemRepository.findById(itemId).get();
 
         if(itemDTO.getName() != null)
             item.setName(itemDTO.getName());
@@ -59,25 +66,32 @@ public class ItemServiceImpl implements ItemService{
     //region getItemByItemId
     @Transactional(readOnly = true)
     @Override
-    public ItemDTO getItemByItemId(Long itemId) {
+    public ItemDTOForGetByItemId getItemByItemId(Long itemId, Long userId) {
 
         if(itemRepository.findById(itemId).isEmpty())
             throw new NotFoundObjectException("Has no item");
 
-        return ItemMapper.mapperToItemDTO(itemRepository.findById(itemId).get());
+        ItemDTOForGetByItemId itemDTO = ItemMapper.mapperToItemDTOForGetByItemId(itemRepository.findById(itemId).get());
+        if (userId == itemDTO.getOwner().getId()) {
+            itemDTO.setNextBooking(functionNext.apply(itemId));
+            itemDTO.setLastBooking(functionLast.apply(itemId));
+        }
+        return itemDTO;
     }
     //endregion
+
 
     //region getItemByUserId
     @Transactional(readOnly = true)
     @Override
-    public List<ItemDTO> getItemsByUserId(Long userId) {
-        List<ItemDTO> items = itemRepository.findByOwner(userId)
-                .stream()
-                .map((ItemMapper::mapperToItemDTO))
-                .collect(Collectors.toList());
+    public List<ItemDTOForGetByItemId> getItemsByUserId(Long userId) {
 
-        return items;
+        return itemRepository.findByOwner(userId)
+                .stream()
+                .map((ItemMapper::mapperToItemDTOForGetByItemId))
+                .peek(i -> i.setLastBooking(functionLast.apply(i.getId())))
+                .peek(i -> i.setNextBooking(functionNext.apply(i.getId())))
+                .collect(Collectors.toList());
     }
     //endregion
 
@@ -99,4 +113,25 @@ public class ItemServiceImpl implements ItemService{
                 .collect(Collectors.toList());*/
     }
     //endregion
+
+    Function<Long, BookingDTO> functionLast = new Function<Long, BookingDTO>() {
+        @Override
+        public BookingDTO apply(Long itemId) {
+            List<Booking> list = bookingRepository.findLastBooking(itemId, LocalDateTime.now()).get();
+            if (list.isEmpty()) {
+                return null;
+            } else
+                return BookingMapper.mapperToBookingDTO(list.get(0));
+        }
+    };
+    Function<Long, BookingDTO> functionNext = new Function<Long, BookingDTO>() {
+        @Override
+        public BookingDTO apply(Long itemId) {
+            List<Booking> list = bookingRepository.findNextBooking(itemId, LocalDateTime.now()).get();
+            if (list.isEmpty()) {
+                return null;
+            } else
+                return BookingMapper.mapperToBookingDTO(list.get(0));
+        }
+    };
 }

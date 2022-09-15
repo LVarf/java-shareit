@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundObjectException;
+import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.user.dto.UserDTO;
 import ru.practicum.shareit.user.model.User;
 
@@ -31,8 +32,6 @@ public class UserServiceImpl implements UserService{
     //region SaveUser
     @Override
     public UserDTO saveUser(UserDTO userDTO) {
-       /* if(userRepository.findByEmail(userDTO.getEmail()).isPresent())
-            throw new IllegalArgumentException("There is a user with such an email");*/
         return UserMapper.mapperToUserDTO(userRepository.save(UserMapper.mapperToUser(userDTO)));
     }
     //endregion
@@ -41,10 +40,11 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserDTO getUserById(Long userId) {
 
-        UserDTO userDTO = UserMapper.mapperToUserDTO(userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundObjectException("The user is not found")));
+        Optional<User> optionalUser = userRepository.findById(userId);
 
-        return userDTO;
+        if (optionalUser.isPresent())
+            return UserMapper.mapperToUserDTO(userRepository.findById(userId).get());
+        else throw new NotFoundObjectException("The user is not found");
     }
     //endregion
 

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.Data;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.requests.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
@@ -18,16 +19,10 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
-    @NotBlank
     @Column(name = "name", nullable = false)
     private String name;
-    @NotNull
-    @NotBlank
     @Column(name = "description", nullable = false)
     private String description;
-    /*@NotNull
-    @NotBlank*/
     @Column(name = "is_available", nullable = false)
     private Boolean available = false;
     @ManyToOne(fetch = FetchType.LAZY)

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice("ru.practicum.shareit")
@@ -14,21 +15,37 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)//400
-    public ErrorResponse badRequest(final ValidationException e) {
-        return new ErrorResponse("Ошибка запроса", e.getMessage());
+    public Map<String, String> badRequest(final ValidationException e) {
+        return Map.of(
+                "Error message", e.getMessage()
+        );
+    }
+    @ExceptionHandler(UnsupportedStatusException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)//400
+    public Map<String, String> handleUnsupportedStatusException(UnsupportedStatusException e) {
+        Map<String, String> map = new HashMap<>();
+        map.put("error", "Unknown state: " + e.getMessage());
+        return map;
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)//404
+    public Map<String, String> handleBadRequestException(BadRequestException e) {
+        Map<String, String> map = new HashMap<>();
+        map.put("error", "Bad request : " + e.getMessage());
+        return map;
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)//404
     public ErrorResponse notFound(final NotFoundObjectException e) {
-        return new ErrorResponse("Ошибка запроса", e.getMessage());
+        return new ErrorResponse("Bad request", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)//500
-    public Map<String, String> handleException ( final RuntimeException e) {
+    public Map<String, String> handleException (final RuntimeException e) {
         return Map.of(
-                "error", "Произошла ошибка!",
                 "Error message", "RuntimeException: " + e.getMessage()
         );
     }
