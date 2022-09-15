@@ -2,11 +2,8 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.boot.web.embedded.undertow.UndertowServletWebServer;
-import ru.practicum.shareit.booking.dto.BookingDTO;
 import ru.practicum.shareit.requests.ItemRequest;
 import ru.practicum.shareit.user.dto.UserDTO;
-import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;

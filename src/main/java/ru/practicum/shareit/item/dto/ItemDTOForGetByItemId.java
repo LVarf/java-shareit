@@ -9,7 +9,7 @@ import ru.practicum.shareit.user.dto.UserDTO;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * // TODO .
@@ -30,4 +30,5 @@ public class ItemDTOForGetByItemId {
     private ItemRequest request;
     private BookingDTO lastBooking;
     private BookingDTO nextBooking;
+    private List<CommentDTO> comments;
 }

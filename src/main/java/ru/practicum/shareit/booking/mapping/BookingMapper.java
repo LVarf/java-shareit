@@ -1,11 +1,10 @@
 package ru.practicum.shareit.booking.mapping;
 
-import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDTO;
 import ru.practicum.shareit.booking.dto.BookingStatusDTO;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.ItemService;
+import ru.practicum.shareit.item.mapping.ItemMapper;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserService;
 

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import ru.practicum.shareit.user.dto.UserDTO;
 
 import java.util.List;

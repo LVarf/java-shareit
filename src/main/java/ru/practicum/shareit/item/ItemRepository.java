@@ -4,20 +4,12 @@ package ru.practicum.shareit.item;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @EnableJpaRepositories
 public interface ItemRepository extends JpaRepository<Item, Long>{
-
-    /*@Query(value = "select * " +
-            "from items i" +
-            "where i.id = ?1;", nativeQuery = true)
-    Optional<Item> findById(Long itemId);*/
 
     @Query(value = "select * from items i " +
             "where (lower(i.description) like concat('%', ?1, '%') " +
