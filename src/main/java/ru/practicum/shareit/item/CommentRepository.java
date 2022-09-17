@@ -17,4 +17,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "where c.item_id = ?1 " +
             "order by created desc", nativeQuery = true)
     Optional<List<Comment>> findAllByItemId(Long itemId);
+
 }

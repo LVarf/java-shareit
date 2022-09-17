@@ -10,13 +10,9 @@ import ru.practicum.shareit.booking.mapping.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exceptions.NotFoundObjectException;
 import ru.practicum.shareit.exceptions.BadRequestException;
-import ru.practicum.shareit.item.dto.CommentDTO;
-import ru.practicum.shareit.item.dto.ItemDTO;
-import ru.practicum.shareit.item.dto.ItemDTOForGetByItemId;
-import ru.practicum.shareit.item.mapping.CommentMapper;
-import ru.practicum.shareit.item.mapping.ItemMapper;
-import ru.practicum.shareit.item.model.Comment;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.mapping.*;
+import ru.practicum.shareit.item.model.*;
 import ru.practicum.shareit.user.UserService;
 
 import java.time.LocalDateTime;
@@ -27,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ItemServiceImpl implements ItemService{
+public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserService userService;
     private final BookingRepository bookingRepository;
@@ -37,7 +33,7 @@ public class ItemServiceImpl implements ItemService{
     //region postItem
     @Transactional
     @Override
-    public ItemDTO postItem(ItemDTO itemDTO, Long userId){
+    public ItemDTO postItem(ItemDTO itemDTO, Long userId) {
         itemDTO.setOwner(userService.getUserById(userId));
         itemDTO = ItemMapper.mapperToItemDTO(itemRepository.save(ItemMapper.mapperToItem(itemDTO, userService)));
         return itemDTO;
@@ -47,19 +43,22 @@ public class ItemServiceImpl implements ItemService{
     //region updateItem
     @Transactional
     @Override
-    public ItemDTO updateItem(Long itemId, Long userId, ItemDTO itemDTO){
-       if(itemRepository.findById(itemId).isPresent()) {
-           if(itemRepository.findById(itemId).get().getOwner().getId() != userId)
-               throw new NotFoundObjectException("The user has no this item");
-       } else throw new NotFoundObjectException("There is no items");
+    public ItemDTO updateItem(Long itemId, Long userId, ItemDTO itemDTO) {
+        if (itemRepository.findById(itemId).isPresent()) {
+            if (itemRepository.findById(itemId).get().getOwner().getId() != userId) {
+                throw new NotFoundObjectException("The user has no this item");
+            }
+        } else {
+            throw new NotFoundObjectException("There is no items");
+        }
 
-       Item item = itemRepository.findById(itemId).get();
+        Item item = itemRepository.findById(itemId).get();
 
-        if(itemDTO.getName() != null)
+        if (itemDTO.getName() != null)
             item.setName(itemDTO.getName());
-        if(itemDTO.getDescription() != null)
+        if (itemDTO.getDescription() != null)
             item.setDescription(itemDTO.getDescription());
-        if(itemDTO.getAvailable() != null)
+        if (itemDTO.getAvailable() != null)
             item.setAvailable(itemDTO.getAvailable());
 
         itemRepository.save(item);
@@ -73,8 +72,9 @@ public class ItemServiceImpl implements ItemService{
     @Override
     public ItemDTOForGetByItemId getItemByItemId(Long itemId, Long userId) {
 
-        if(itemRepository.findById(itemId).isEmpty())
+        if (itemRepository.findById(itemId).isEmpty()) {
             throw new NotFoundObjectException("Has no item");
+        }
 
         ItemDTOForGetByItemId itemDTO = ItemMapper.mapperToItemDTOForGetByItemId(itemRepository.findById(itemId).get());
         if (userId == itemDTO.getOwner().getId()) {
@@ -98,7 +98,9 @@ public class ItemServiceImpl implements ItemService{
     @Override
     public List<ItemDTOForGetByItemId> getItemsByUserId(Long userId) {
 
-        return itemRepository.findByOwner(userId)
+        return itemRepository
+                .findItemsByOwnerId(userId)
+                .get()
                 .stream()
                 .map((ItemMapper::mapperToItemDTOForGetByItemId))
                 .peek(i -> i.setLastBooking(functionLast.apply(i.getId())))
@@ -111,7 +113,7 @@ public class ItemServiceImpl implements ItemService{
     @Transactional(readOnly = true)
     @Override
     public List<ItemDTO> searchItems(String text) {
-        if(text.isEmpty())
+        if (text.isEmpty())
             return List.of();
         return itemRepository.findByContainsText(text.toLowerCase())
                 .stream()

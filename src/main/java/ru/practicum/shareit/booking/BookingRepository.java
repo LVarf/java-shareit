@@ -3,10 +3,8 @@ package ru.practicum.shareit.booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.booking.dto.BookingStatusDTO;
 import ru.practicum.shareit.booking.model.Booking;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -15,11 +13,7 @@ import java.util.Optional;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     // region methods for getBookingByUserId
-    @Query(value = "select * " +
-            "from bookings b " +
-            "where b.booker_id = ?1 " +
-            "ORDER BY b.start_date DESC ", nativeQuery = true)
-    Optional<List<Booking>> findAllBookingsByBookerAllState(Long userId);
+    Optional<List<Booking>> findBookingByBookerIdOrderByStartDesc(Long userId);
 
     @Query(value = "select * " +
             "from bookings b " +

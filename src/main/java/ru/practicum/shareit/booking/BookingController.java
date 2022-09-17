@@ -5,6 +5,7 @@ import net.bytebuddy.utility.dispatcher.JavaDispatcher;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDTO;
+import ru.practicum.shareit.booking.dto.BookingStatusDTO;
 
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
@@ -41,7 +42,8 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDTO> getBookingByUserId(
-            @RequestParam(value = "state", required = false, defaultValue = "ALL") String state,
+            @RequestParam(value = "state", required = false,
+                    defaultValue = "ALL") String state,
             @RequestHeader("X-Sharer-User-Id") Long userId) {
         return bookingService.getBookingByUserId(state, userId);
     }
