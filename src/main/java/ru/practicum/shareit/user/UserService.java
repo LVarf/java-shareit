@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import ru.practicum.shareit.user.dto.UserDTO;
 
 import java.util.List;
@@ -10,9 +9,9 @@ public interface UserService {
 
     UserDTO saveUser(UserDTO user);
 
-    UserDTO getUserById(long userId);
+    UserDTO getUserById(Long userId);
 
-    boolean deleteUser(long userId);
+    boolean deleteUser(Long userId);
 
-    UserDTO updateUser(long userId, UserDTO userDTO);
+    UserDTO updateUser(Long userId, UserDTO userDTO);
 }
