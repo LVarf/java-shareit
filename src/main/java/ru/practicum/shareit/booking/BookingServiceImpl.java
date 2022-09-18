@@ -107,14 +107,13 @@ public class BookingServiceImpl implements BookingService {
                         .orElseThrow(NullPointerException::new);
                 break;
             case REJECTED:
-                bookingRepository.findByBookerIdAndStatus(userId,
+                list = bookingRepository.findByBookerIdAndStatus(userId,
                                 BookingStatusDTO.REJECTED.getStatusDTO())
                         .orElseThrow(NullPointerException::new);
                 break;
             default:
                 throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
-        }
-        ;
+        };
         return list.stream()
                 .map(BookingMapper::mapperToBookingDTO)
                 .collect(Collectors.toList());
@@ -156,8 +155,7 @@ public class BookingServiceImpl implements BookingService {
                 break;
             default:
                 throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
-        }
-        ;
+        };
         return list.stream()
                 .map(BookingMapper::mapperToBookingDTO)
                 .collect(Collectors.toList());
