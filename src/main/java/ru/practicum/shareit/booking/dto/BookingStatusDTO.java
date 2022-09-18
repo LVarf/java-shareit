@@ -15,7 +15,6 @@ public enum BookingStatusDTO {
     UNSUPPORTED_STATUS("UNSUPPORTED_STATUS");
 
 
-
     private final String statusDTO;
 
     BookingStatusDTO(String statusDTO) {
@@ -23,16 +22,36 @@ public enum BookingStatusDTO {
     }
 
     public static BookingStatusDTO convertState(String state) {
-        return switch (state) {
-            case "ALL" -> ALL;
-            case "CURRENT" -> CURRENT;
-            case "PAST" -> PAST;
-            case "FUTURE" -> FUTURE;
-            case "WAITING" -> WAITING;
-            case "APPROVED" -> APPROVED;
-            case "REJECTED" -> REJECTED;
-            case "CANCELED" -> CANCELED;
-            default -> UNSUPPORTED_STATUS;
-        };
+        BookingStatusDTO bookingStatusDTO;
+        switch (state) {
+            case "ALL":
+                bookingStatusDTO = ALL;
+                break;
+            case "CURRENT":
+                bookingStatusDTO = CURRENT;
+                break;
+            case "PAST":
+                bookingStatusDTO = PAST;
+                break;
+            case "FUTURE":
+                bookingStatusDTO = FUTURE;
+                break;
+            case "WAITING":
+                bookingStatusDTO = WAITING;
+                break;
+            case "APPROVED":
+                bookingStatusDTO = APPROVED;
+                break;
+            case "REJECTED":
+                bookingStatusDTO = REJECTED;
+                break;
+            case "CANCELED":
+                bookingStatusDTO = CANCELED;
+            default:
+                bookingStatusDTO = UNSUPPORTED_STATUS;
+        }
+        ;
+
+        return bookingStatusDTO;
     }
 }

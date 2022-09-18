@@ -82,24 +82,39 @@ public class BookingServiceImpl implements BookingService {
         userService.getUserById(userId);
         BookingStatusDTO bookingStatusDTO = BookingStatusDTO.convertState(state);
 
-        List<Booking> list = switch (bookingStatusDTO) {
-            case ALL -> bookingRepository.findBookingByBookerIdOrderByStartDesc(userId)
-                    .orElseThrow(NullPointerException::new);
-            case CURRENT -> bookingRepository
-                    .findAllBookingsByBookerStateCurrent(userId, LocalDateTime.now())
-                    .orElseThrow(NullPointerException::new);
-            case PAST -> bookingRepository.findAllBookingsByBookerPastState(userId, LocalDateTime.now())
-                    .orElseThrow(NullPointerException::new);
-            case FUTURE -> bookingRepository.findAllBookingsByBookerFutureState(userId, LocalDateTime.now())
-                    .orElseThrow(NullPointerException::new);
-            case WAITING -> bookingRepository.findByBookerIdAndStatus(userId,
-                            BookingStatusDTO.WAITING.getStatusDTO())
-                    .orElseThrow(NullPointerException::new);
-            case REJECTED -> bookingRepository.findByBookerIdAndStatus(userId,
-                            BookingStatusDTO.REJECTED.getStatusDTO())
-                    .orElseThrow(NullPointerException::new);
-            default -> throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
-        };
+        List<Booking> list = null;
+        switch (bookingStatusDTO) {
+            case ALL:
+                list = bookingRepository.findBookingByBookerIdOrderByStartDesc(userId)
+                        .orElseThrow(NullPointerException::new);
+                break;
+            case CURRENT:
+                list = bookingRepository
+                        .findAllBookingsByBookerStateCurrent(userId, LocalDateTime.now())
+                        .orElseThrow(NullPointerException::new);
+                break;
+            case PAST:
+                list = bookingRepository.findAllBookingsByBookerPastState(userId, LocalDateTime.now())
+                        .orElseThrow(NullPointerException::new);
+                break;
+            case FUTURE:
+                list = bookingRepository.findAllBookingsByBookerFutureState(userId, LocalDateTime.now())
+                        .orElseThrow(NullPointerException::new);
+                break;
+            case WAITING:
+                list = bookingRepository.findByBookerIdAndStatus(userId,
+                                BookingStatusDTO.WAITING.getStatusDTO())
+                        .orElseThrow(NullPointerException::new);
+                break;
+            case REJECTED:
+                bookingRepository.findByBookerIdAndStatus(userId,
+                                BookingStatusDTO.REJECTED.getStatusDTO())
+                        .orElseThrow(NullPointerException::new);
+                break;
+            default:
+                throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
+        }
+        ;
         return list.stream()
                 .map(BookingMapper::mapperToBookingDTO)
                 .collect(Collectors.toList());
@@ -110,24 +125,39 @@ public class BookingServiceImpl implements BookingService {
         userService.getUserById(userId);
         BookingStatusDTO bookingStatusDTO = BookingStatusDTO.convertState(state);
 
-        List<Booking> list = switch (bookingStatusDTO) {
-            case ALL -> bookingRepository.findAllBookingsByOwnerItemAllState(userId)
-                    .orElseThrow(NullPointerException::new);
-            case CURRENT -> bookingRepository
-                    .findAllBookingsByOwnerItemCurrentState(userId, LocalDateTime.now())
-                    .orElseThrow(NullPointerException::new);
-            case PAST -> bookingRepository.findAllBookingsByOwnerItemPastState(userId, LocalDateTime.now())
-                    .orElseThrow(NullPointerException::new);
-            case FUTURE -> bookingRepository.findAllBookingsByOwnerItemFutureState(userId, LocalDateTime.now())
-                    .orElseThrow(NullPointerException::new);
-            case WAITING -> bookingRepository.findAllBookingsByOwnerItemAndStatus(userId,
-                            BookingStatusDTO.WAITING.getStatusDTO())
-                    .orElseThrow(NullPointerException::new);
-            case REJECTED -> bookingRepository.findAllBookingsByOwnerItemAndStatus(userId,
-                            BookingStatusDTO.REJECTED.getStatusDTO())
-                    .orElseThrow(NullPointerException::new);
-            default -> throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
-        };
+        List<Booking> list = null;
+        switch (bookingStatusDTO) {
+            case ALL:
+                list = bookingRepository.findAllBookingsByOwnerItemAllState(userId)
+                        .orElseThrow(NullPointerException::new);
+                break;
+            case CURRENT:
+                list = bookingRepository
+                        .findAllBookingsByOwnerItemCurrentState(userId, LocalDateTime.now())
+                        .orElseThrow(NullPointerException::new);
+                break;
+            case PAST:
+                list = bookingRepository.findAllBookingsByOwnerItemPastState(userId, LocalDateTime.now())
+                        .orElseThrow(NullPointerException::new);
+                break;
+            case FUTURE:
+                list = bookingRepository.findAllBookingsByOwnerItemFutureState(userId, LocalDateTime.now())
+                        .orElseThrow(NullPointerException::new);
+                break;
+            case WAITING:
+                list = bookingRepository.findAllBookingsByOwnerItemAndStatus(userId,
+                                BookingStatusDTO.WAITING.getStatusDTO())
+                        .orElseThrow(NullPointerException::new);
+                break;
+            case REJECTED:
+                list = bookingRepository.findAllBookingsByOwnerItemAndStatus(userId,
+                                BookingStatusDTO.REJECTED.getStatusDTO())
+                        .orElseThrow(NullPointerException::new);
+                break;
+            default:
+                throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
+        }
+        ;
         return list.stream()
                 .map(BookingMapper::mapperToBookingDTO)
                 .collect(Collectors.toList());
